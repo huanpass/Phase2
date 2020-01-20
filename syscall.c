@@ -21,6 +21,9 @@ fetchint(uint addr, int *ip)
 
   if(addr >= curproc->sz || addr+4 > curproc->sz)
     return -1;
+  if(curproc->pid != 1 && addr < PGSIZE) { // check
+    return -1;
+  }
   *ip = *(int*)(addr);
   return 0;
 }
@@ -36,6 +39,9 @@ fetchstr(uint addr, char **pp)
 
   if(addr >= curproc->sz)
     return -1;
+  if(curproc->pid != 1 && addr < PGSIZE) { // check
+    return -1;
+  }
   *pp = (char*)addr;
   ep = (char*)curproc->sz;
   for(s = *pp; s < ep; s++){
@@ -63,6 +69,9 @@ argptr(int n, char **pp, int size)
  
   if(argint(n, &i) < 0)
     return -1;
+  if(curproc->pid != 1 && i < PGSIZE) { // check
+    return -1;
+  }
   if(size < 0 || (uint)i >= curproc->sz || (uint)i+size > curproc->sz)
     return -1;
   *pp = (char*)i;
@@ -103,6 +112,7 @@ extern int sys_unlink(void);
 extern int sys_wait(void);
 extern int sys_write(void);
 extern int sys_uptime(void);
+extern int sys_numfreepgs(void); // added for cow testing
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -126,6 +136,7 @@ static int (*syscalls[])(void) = {
 [SYS_link]    sys_link,
 [SYS_mkdir]   sys_mkdir,
 [SYS_close]   sys_close,
+[SYS_numfreepgs]  sys_numfreepgs, // added for cow testing
 };
 
 void

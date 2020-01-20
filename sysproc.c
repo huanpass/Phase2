@@ -89,3 +89,9 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+
+// added for cow testing
+int
+sys_numfreepgs(void) {
+  return numfreepgs();
+}

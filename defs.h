@@ -68,6 +68,10 @@ char*           kalloc(void);
 void            kfree(char*);
 void            kinit1(void*, void*);
 void            kinit2(void*, void*);
+int             numfreepgs(void); // added for cow testing
+void            incrrefcount(uint pa); // for cow
+void            decrrefcount(uint pa); // for cow
+uchar           getrefcount(uint pa); // for cow
 
 // kbd.c
 void            kbdintr(void);
@@ -185,6 +189,7 @@ void            switchuvm(struct proc*);
 void            switchkvm(void);
 int             copyout(pde_t*, uint, void*, uint);
 void            clearpteu(pde_t *pgdir, char *uva);
+void            pagefault(uint err_code); // added for cow
 
 // number of elements in fixed-size array
 #define NELEM(x) (sizeof(x)/sizeof((x)[0]))

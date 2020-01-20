@@ -47,6 +47,9 @@ trap(struct trapframe *tf)
   }
 
   switch(tf->trapno){
+  case T_PGFLT: // added case to check for page fault for cow
+    pagefault(tf->err); // call page fault fxn if pagefault
+    break;  // and break out of switch stment
   case T_IRQ0 + IRQ_TIMER:
     if(cpuid() == 0){
       acquire(&tickslock);
